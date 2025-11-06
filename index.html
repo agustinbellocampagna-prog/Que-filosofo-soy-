@@ -1122,6 +1122,19 @@
     renderAll();
     updateTemplateAreaFromConfig();
   </script>
+<button onclick="compartir()" style="position:fixed; bottom:20px; right:20px; background:#ff9800; border:none; border-radius:999px; padding:14px 18px; font-size:1rem; color:#fff; cursor:pointer;">
+📣 Compartir test
+</button>
+
+<script>
+function compartir() {
+  const url = window.location.href;
+  const text = "Probá este test y decime qué resultado te dio 👀👇";
+  const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + " " + url)}`;
+  window.open(shareUrl, "_blank");
+}
+</script>
 </body>
 </html>
+
 
