@@ -1,0 +1,1118 @@
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generador de Test por Categorías</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #ffe082, #ffccbc, #e1bee7);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 16px;
+    }
+    .app {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+      padding: 20px;
+      max-width: 1100px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      backdrop-filter: blur(10px);
+    }
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .title-block h1 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+    .title-block p {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    .pill {
+      background: #fff3e0;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pill span.icon {
+      font-size: 1.1rem;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      border-radius: 999px;
+      background: #f5f5f5;
+      padding: 4px;
+      align-self: flex-start;
+    }
+    .tab-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .tab-btn.active {
+      background: #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr);
+      gap: 18px;
+    }
+    @media (max-width: 900px) {
+      .content {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 16px 18px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+    .card-header h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #ede7f6;
+    }
+
+    .field-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .input, .textarea, select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.08);
+      padding: 8px 10px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      background: #fafafa;
+    }
+    .textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .input:focus, .textarea:focus, select:focus {
+      border-color: #ff9800;
+      background: #fffdf5;
+      box-shadow: 0 0 0 1px rgba(255,152,0,0.15);
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #ff9800, #ff7043);
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(255,112,67,0.35);
+    }
+    .btn-ghost {
+      background: #f5f5f5;
+      color: #444;
+    }
+    .btn-small {
+      padding: 5px 10px;
+      font-size: 0.78rem;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+    }
+    .btn:active {
+      transform: translateY(0px) scale(0.98);
+      box-shadow: none;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 0.75rem;
+    }
+    .chip {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #fff8e1;
+    }
+
+    .questions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 320px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .q-item {
+      border-radius: 12px;
+      padding: 10px 10px;
+      background: #fffdf7;
+      border: 1px dashed rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .q-item-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+    .q-item-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .q-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .q-options {
+      font-size: 0.78rem;
+      opacity: 0.8;
+    }
+
+    .stack-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .template-help {
+      font-size: 0.78rem;
+      opacity: 0.85;
+    }
+
+    .quiz-card {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+    .quiz-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+    .quiz-description {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 7px;
+      border-radius: 999px;
+      background: #f3e5f5;
+      overflow: hidden;
+    }
+    .progress-inner {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #ff9800, #ff4081);
+      transition: width 0.2s ease;
+    }
+
+    .current-question {
+      background: #fffdf7;
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px dashed rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .current-question-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px;
+    }
+    .option-btn {
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.08);
+      padding: 8px 10px;
+      font-size: 0.85rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: #ffffff;
+      transition: all 0.12s ease;
+    }
+    .option-btn span.letter {
+      font-weight: 700;
+      font-size: 0.8rem;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: #fff3e0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .option-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.10);
+    }
+    .option-btn.selected {
+      border-color: #ff9800;
+      background: #fff8e1;
+      box-shadow: 0 0 0 1px rgba(255,152,0,0.35);
+    }
+
+    .quiz-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.78rem;
+    }
+
+    .results {
+      border-radius: 14px;
+      background: #f3e5f5;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .results-title {
+      font-weight: 700;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .results-title span.icon {
+      font-size: 1.3rem;
+    }
+    .results-details {
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+    .category-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .category-pill {
+      background: rgba(255,255,255,0.85);
+      border-radius: 12px;
+      padding: 6px 8px;
+      font-size: 0.78rem;
+    }
+    .category-pill strong {
+      font-size: 0.8rem;
+    }
+
+    .aside-card {
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .aside-section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .aside-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .aside-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.78rem;
+    }
+
+    .template-area-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .template-area-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .template-area-label-row span {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .template-area-label-row .hint {
+      font-size: 0.72rem;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+
+
+  <div class="app">
+    <div class="app-header">
+      <div class="title-block">
+        <h1>Test para sbaer que filosofo eres</h1>
+        <p>Descubre que filosofo se asemeja mas a tu concepto de felicidad.</p>
+      </div>
+      <div class="stack-row">
+        <div class="pill">
+          <span class="icon">🎯</span>
+          <span>Opción A/B/C/D = categoría distinta</span>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="quiz">Tomar test</button>
+          <button class="tab-btn" data-tab="config">Configurar plantilla</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Columna principal -->
+      <div class="card">
+        <div class="card-header">
+          <h2 id="mainCardTitle">Test</h2>
+          <span class="badge" id="questionCountBadge">0 preguntas</span>
+        </div>
+
+        
+        <div id="quizView" class="quiz-card">
+          <div class="quiz-header">
+            <div>
+              <div class="quiz-title" id="quizTitle">Título del test</div>
+              <div class="quiz-description" id="quizDescription">Descripción breve del test.</div>
+            </div>
+            <div class="chip-row">
+              <div class="chip" id="progressLabel">0/0 respondidas</div>
+            </div>
+          </div>
+
+          <div class="progress-bar">
+            <div class="progress-inner" id="progressInner"></div>
+          </div>
+
+          <div class="current-question" id="currentQuestionBox">
+            <div class="current-question-title" id="currentQuestionText">No hay preguntas definidas todavía.</div>
+            <div class="options-grid" id="optionsGrid"></div>
+          </div>
+
+          <div class="quiz-footer">
+            <div>
+              <span id="questionIndexLabel">Pregunta 0 de 0</span>
+            </div>
+            <div class="stack-row">
+              <button class="btn btn-ghost btn-small" id="prevButton">⏪ Anterior</button>
+              <button class="btn btn-ghost btn-small" id="nextButton">Siguiente ⏩</button>
+              <button class="btn btn-primary btn-small" id="finishButton">Ver resultado ✨</button>
+            </div>
+          </div>
+
+          <div class="results" id="resultsBox">
+            <div class="results-title">
+              <span class="icon">🏆</span>
+              <span id="resultsTitleText">Resultado</span>
+            </div>
+            <div class="results-details" id="resultsDescriptionText"></div>
+            <div class="category-summary" id="categorySummary"></div>
+          </div>
+        </div>
+
+        <!-- Vista CONFIG -->
+        <div id="configView" style="display:none; flex-direction: column; gap: 10px;">
+          <div class="stack-row" style="justify-content: space-between; align-items: flex-start;">
+            <div style="flex: 2; min-width: 0;">
+              <div class="field-label">Título del test</div>
+              <input id="cfgTitle" class="input" />
+              <div class="field-label" style="margin-top:8px;">Descripción breve</div>
+              <textarea id="cfgDescription" class="textarea" rows="2"></textarea>
+            </div>
+            <div style="flex: 1; min-width: 0; display:flex; flex-direction:column; gap:6px;">
+              <div class="field-label">Acciones rápidas</div>
+              <button class="btn btn-ghost btn-small" id="addSampleQuestionBtn">➕ Añadir pregunta de ejemplo</button>
+              <button class="btn btn-ghost btn-small" id="resetTemplateBtn">🔄 Volver a plantilla por defecto</button>
+              <button class="btn btn-primary btn-small" id="syncToJsonBtn">💾 Actualizar plantilla JSON</button>
+            </div>
+          </div>
+
+          <div class="template-area-wrapper">
+            <div class="template-area-label-row">
+              <span>Plantilla JSON (editable)</span>
+              <span class="hint">Edita aquí preguntas, opciones y resultados. Luego pulsa "Cargar desde plantilla".</span>
+            </div>
+            <textarea id="templateArea" class="textarea" spellcheck="false"></textarea>
+            <div class="stack-row" style="justify-content: flex-end;">
+              <button class="btn btn-ghost btn-small" id="copyTemplateBtn">📋 Copiar plantilla</button>
+              <button class="btn btn-primary btn-small" id="loadFromTemplateBtn">Cargar desde plantilla ⤴️</button>
+            </div>
+            <div class="template-help">
+              Consejo: Puedes guardar este JSON en un .txt para tener distintas versiones de tu test.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna lateral -->
+      <div class="card aside-card">
+        <div>
+          <div class="aside-section-title">Categorías (por letra)</div>
+          <div class="aside-grid" id="categoriesList"></div>
+        </div>
+
+        <hr style="border:none; border-top:1px dashed rgba(0,0,0,0.08);" />
+
+        <div>
+          <div class="aside-section-title">Ayuda rápida</div>
+          <ul style="margin: 0; padding-left: 16px;">
+            <li>La primera opción de cada pregunta suma a <strong>A</strong>, la segunda a <strong>B</strong>, etc.</li>
+            <li>Puedes borrar categorías (por ejemplo dejar sólo A y B) y ajustar el número de opciones.</li>
+            <li>Si hay empate, se muestran varias categorías predominantes.</li>
+          </ul>
+        </div>
+
+        <hr style="border:none; border-top:1px dashed rgba(0,0,0,0.08);" />
+
+        <div>
+          <div class="aside-section-title">Resumen del test</div>
+          <div class="aside-grid">
+            <div class="aside-row"><span>Número de preguntas:</span> <strong id="asideQuestionCount">0</strong></div>
+            <div class="aside-row"><span>Categorías activas:</span> <strong id="asideCategoryCount">0</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    
+
+    let testConfig = {
+  "title": "Que filosofo soy",
+  "description": "Marcá las opciones que mejor te representen. Al final, verás qué tipo de tendencia predomina en tus respuestas.",
+  "categories": {
+    "A": {
+      "name": "Tendencia Kantiana",
+      "description": "Tu felicidad proviene del deber y la coherencia moral. Valorás actuar correctamente más allá del placer o el resultado."
+    },
+    "B": {
+      "name": "Tendencia Milliana",
+      "description": "Buscás la felicidad colectiva y el bienestar compartido. Tus decisiones se basan en sus consecuencias y beneficios sociales."
+    },
+    "C": {
+      "name": "Tendencia Epicúrea",
+      "description": "Tu felicidad está en la tranquilidad, el placer simple y la ausencia de dolor. Valorás la paz y el disfrute equilibrado."
+    },
+    "D": {
+      "name": "Tendencia Aristotélica",
+      "description": "Creés que la felicidad se logra viviendo con virtud, cultivando el carácter y alcanzando tu máximo potencial humano."
+    }
+  },
+  "questions": [
+    {
+      "text": "Te ofrecen un trabajo mejor pago, pero implica mentir a clientes.",
+      "options": [
+        "Lo rechazo: no podría actuar en contra de mis principios.",
+        "Lo acepto si puedo hacer más bien que mal con el dinero.",
+        "Lo acepto si no me genera angustia ni compromete mi tranquilidad.",
+        "Lo pienso según si ese trabajo me permitirá desarrollarme como persona."
+      ]
+    },
+    {
+      "text": "Un amigo te pide ayuda con algo que te incomoda mucho.",
+      "options": [
+        "Lo ayudo igual, es mi deber moral.",
+        "Lo ayudo si eso mejora la situación general.",
+        "Lo ayudo si no me altera la paz interior.",
+        "Lo ayudo si eso fortalece nuestra amistad y mi virtud."
+      ]
+    },
+    {
+      "text": "En tu tiempo libre, ¿qué preferís hacer?",
+      "options": [
+        "Actividades útiles o éticamente valiosas.",
+        "Algo divertido o socialmente enriquecedor.",
+        "Relajarme, disfrutar de la calma y el placer simple.",
+        "Actividades que me ayuden a crecer o mejorar mis talentos."
+      ]
+    },
+    {
+      "text": "Si decir la verdad causa sufrimiento, ¿qué hacés?",
+      "options": [
+        "La digo igual, porque es lo correcto.",
+        "Busco una forma de decirla que genere el menor daño posible.",
+        "Evito conflictos: prefiero mantener la armonía.",
+        "Digo la verdad si ayuda a la persona a crecer."
+      ]
+    },
+    {
+      "text": "Cuando pensás en tu felicidad, la imaginás como...",
+      "options": [
+        "Vivir con integridad moral.",
+        "Lograr bienestar para mí y para los demás.",
+        "Vivir sin miedo ni dolor, con placer moderado.",
+        "Alcanzar mi mejor versión, ser virtuoso."
+      ]
+    },
+    {
+      "text": "Si ves a alguien haciendo algo injusto, ¿qué hacés?",
+      "options": [
+        "Lo enfrento: tengo el deber de hacerlo.",
+        "Lo enfrento si con eso se mejora la situación general.",
+        "Prefiero no involucrarme en conflictos.",
+        "Actúo buscando justicia, pero con prudencia y equilibrio."
+      ]
+    },
+    {
+      "text": "En tus relaciones personales, valorás más...",
+      "options": [
+        "La lealtad y el respeto.",
+        "La alegría y el apoyo mutuo.",
+        "La tranquilidad y la ausencia de drama.",
+        "El crecimiento mutuo y la virtud compartida."
+      ]
+    },
+    {
+      "text": "Si cometés un error que nadie nota, ¿qué hacés?",
+      "options": [
+        "Lo corrijo igual: sé que estuvo mal.",
+        "Lo corrijo si puede causar daño en el futuro.",
+        "Si no afecta a nadie ni me perturba, lo dejo pasar.",
+        "Lo corrijo si sirve para aprender y mejorar."
+      ]
+    },
+    {
+      "text": "Frente a un conflicto, ¿cómo reaccionás?",
+      "options": [
+        "Defiendo mis principios.",
+        "Busco un acuerdo que deje a todos satisfechos.",
+        "Evito el conflicto y busco paz.",
+        "Actúo con templanza y racionalidad."
+      ]
+    },
+    {
+      "text": "¿Qué te da más felicidad al final del día?",
+      "options": [
+        "Haber hecho lo correcto.",
+        "Haber generado alegría o bienestar.",
+        "Haber tenido un día tranquilo y sin estrés.",
+        "Haber aprendido o actuado con virtud."
+      ]
+    },
+    {
+      "text": "Si pudieras enseñar algo al mundo, sería...",
+      "options": [
+        "Que el deber y la moral importan más que el placer.",
+        "Que la felicidad colectiva vale más que la individual.",
+        "Que el placer moderado y la serenidad son la clave.",
+        "Que la felicidad se alcanza viviendo con virtud."
+      ]
+    },
+    {
+      "text": "Tenés la oportunidad de ganar algo importante, pero implica hacer una pequeña trampa.",
+      "options": [
+        "No lo hago: la honestidad no se negocia.",
+        "Lo haría si el beneficio supera claramente el daño.",
+        "No lo hago porque me generaría culpa y malestar.",
+        "Lo evalúo según si contribuye o no a mi carácter y crecimiento."
+      ]
+    },
+    {
+      "text": "Un conocido habla mal de vos injustamente.",
+      "options": [
+        "Lo enfrento y digo la verdad, porque es lo correcto.",
+        "Lo enfrento solo si al hacerlo se aclara y mejora la relación.",
+        "Dejo pasar: no vale la pena el drama.",
+        "Hablo con él con calma para restaurar la justicia y fortalecer la virtud."
+      ]
+    },
+    {
+      "text": "Te dan un día libre inesperado. ¿Qué hacés primero?",
+      "options": [
+        "Algo útil o moralmente correcto.",
+        "Algo que implique compartir y disfrutar con otros.",
+        "Algo relajante para cuidar mi tranquilidad.",
+        "Algo que me ayude a desarrollarme como persona."
+      ]
+    },
+    {
+      "text": "Alguien necesita que le digas algo difícil pero verdadero.",
+      "options": [
+        "Se lo digo directamente: la verdad es un deber.",
+        "Se lo digo buscando el mayor bien posible.",
+        "Se lo digo solo si no rompe la paz emocional.",
+        "Se lo digo con tacto y prudencia, ayudándolo a crecer."
+      ]
+    },
+      {
+      "text": "¿Cómo describirías la felicidad ideal?",
+      "options": [
+        "Vivir sin contradicción interna, siendo moralmente recto.",
+        "Un mundo donde todos disfrutan y están bien.",
+        "Una vida serena, simple y sin sufrimiento.",
+        "Alcanzar la realización personal floreciendo como ser humano."
+      ]
+    },
+    {
+      "text": "¿Qué te motiva cada mañana?",
+      "options": [
+        "Cumplir con mis deberes.",
+        "Mejorar mi entorno.",
+        "Disfrutar de los pequeños placeres.",
+        "Ser un poco mejor que ayer."
+      ]
+    }
+  ]
+};
+
+    // Respuestas del usuario: índice de opción elegida por pregunta (0 = A, 1 = B, etc.)
+    let answers = [];
+    let currentQuestionIndex = 0;
+
+    // ==============================
+    //   ELEMENTOS DEL DOM
+    // ==============================
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const quizView = document.getElementById('quizView');
+    const configView = document.getElementById('configView');
+
+    const quizTitleEl = document.getElementById('quizTitle');
+    const quizDescriptionEl = document.getElementById('quizDescription');
+    const progressLabelEl = document.getElementById('progressLabel');
+    const progressInnerEl = document.getElementById('progressInner');
+    const currentQuestionTextEl = document.getElementById('currentQuestionText');
+    const optionsGridEl = document.getElementById('optionsGrid');
+    const questionIndexLabelEl = document.getElementById('questionIndexLabel');
+    const resultsBoxEl = document.getElementById('resultsBox');
+    const resultsTitleTextEl = document.getElementById('resultsTitleText');
+    const resultsDescriptionTextEl = document.getElementById('resultsDescriptionText');
+    const categorySummaryEl = document.getElementById('categorySummary');
+    const questionCountBadgeEl = document.getElementById('questionCountBadge');
+
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+    const finishButton = document.getElementById('finishButton');
+
+    // Config
+    const cfgTitleInput = document.getElementById('cfgTitle');
+    const cfgDescriptionInput = document.getElementById('cfgDescription');
+    const templateArea = document.getElementById('templateArea');
+    const addSampleQuestionBtn = document.getElementById('addSampleQuestionBtn');
+    const resetTemplateBtn = document.getElementById('resetTemplateBtn');
+    const syncToJsonBtn = document.getElementById('syncToJsonBtn');
+    const copyTemplateBtn = document.getElementById('copyTemplateBtn');
+    const loadFromTemplateBtn = document.getElementById('loadFromTemplateBtn');
+
+    // Aside
+    const categoriesListEl = document.getElementById('categoriesList');
+    const asideQuestionCountEl = document.getElementById('asideQuestionCount');
+    const asideCategoryCountEl = document.getElementById('asideCategoryCount');
+
+    // ==============================
+    //   UTILIDADES
+    // ==============================
+
+    function updateTemplateAreaFromConfig() {
+      const json = JSON.stringify(testConfig, null, 2);
+      templateArea.value = json;
+    }
+
+    function loadConfigFromTemplateArea() {
+      try {
+        const obj = JSON.parse(templateArea.value);
+        if (!obj || typeof obj !== 'object') throw new Error('La plantilla no es un objeto válido.');
+        if (!obj.questions || !Array.isArray(obj.questions)) throw new Error('La plantilla debe tener un array "questions".');
+        testConfig = obj;
+        answers = new Array(testConfig.questions.length).fill(null);
+        currentQuestionIndex = 0;
+        renderAll();
+        alert('Plantilla cargada correctamente ✅');
+      } catch (e) {
+        alert('Error al leer la plantilla JSON: ' + e.message);
+      }
+    }
+
+    function copyTemplateToClipboard() {
+      templateArea.select();
+      document.execCommand('copy');
+      alert('Plantilla copiada al portapapeles ✅');
+    }
+
+    function addSampleQuestion() {
+      testConfig.questions.push({
+        text: "Nueva pregunta de ejemplo (edítala en la plantilla JSON)",
+        options: [
+          "Opción A",
+          "Opción B",
+          "Opción C",
+          "Opción D"
+        ]
+      });
+      answers = new Array(testConfig.questions.length).fill(null);
+      currentQuestionIndex = testConfig.questions.length - 1;
+      renderAll();
+      updateTemplateAreaFromConfig();
+    }
+
+    function resetTemplate() {
+      if (!confirm('¿Seguro que querés volver a la plantilla de ejemplo? Se perderán tus cambios actuales.')) return;
+      testConfig = {
+        title: "Test de Tendencias Cotidianas",
+        description: "Marcá las opciones que mejor te representen. Al final, verás qué tipo de tendencia predomina en tus respuestas.",
+        categories: {
+          A: {
+            name: "Tendencia A: Analítico/a",
+            description: "Te gusta pensar las cosas con calma, comparar opciones y tomar decisiones racionales." 
+          },
+          B: {
+            name: "Tendencia B: Práctico/a",
+            description: "Preferís soluciones rápidas y concretas, sin mucha vuelta." 
+          },
+          C: {
+            name: "Tendencia C: Emocional",
+            description: "Tus decisiones pasan mucho por cómo te sentís y por tus vínculos." 
+          },
+          D: {
+            name: "Tendencia D: Aventurero/a",
+            description: "Te gusta probar cosas nuevas, experimentar y salir de la rutina." 
+          }
+        },
+        questions: [
+          {
+            text: "Un sábado a la tarde, ¿qué preferís hacer?",
+            options: [
+              "Planificar la semana y ordenar tus cosas.",
+              "Resolver pendientes rápidos y dejar todo al día.",
+              "Juntarte con alguien importante para vos.",
+              "Salir a descubrir un lugar nuevo." 
+            ]
+          },
+          {
+            text: "Tenés que tomar una decisión importante…",
+            options: [
+              "Hacés una lista de pros y contras.",
+              "Elegís lo que parezca más eficiente.",
+              "Hablás con alguien de confianza para ver cómo te sentís.",
+              "Te guiás por la intuición y lo que te entusiasma más." 
+            ]
+          },
+          {
+            text: "En un trabajo en grupo, ¿qué rol tomás?",
+            options: [
+              "Organizar ideas y darle estructura al proyecto.",
+              "Ejecutar las tareas para avanzar rápido.",
+              "Acompañar al equipo para que todos estén bien.",
+              "Proponer ideas nuevas y arriesgadas." 
+            ]
+          }
+        ]
+      };
+      answers = new Array(testConfig.questions.length).fill(null);
+      currentQuestionIndex = 0;
+      renderAll();
+      updateTemplateAreaFromConfig();
+    }
+
+    function updateConfigFromSimpleFields() {
+      testConfig.title = cfgTitleInput.value || "";
+      testConfig.description = cfgDescriptionInput.value || "";
+      updateTemplateAreaFromConfig();
+      renderAll();
+    }
+
+    // ==============================
+    //   RENDER GENERAL
+    // ==============================
+
+    function renderAll() {
+      // Título y descripción
+      quizTitleEl.textContent = testConfig.title || 'Test sin título';
+      quizDescriptionEl.textContent = testConfig.description || '';
+
+      cfgTitleInput.value = testConfig.title || '';
+      cfgDescriptionInput.value = testConfig.description || '';
+
+      // Conteos
+      const totalQuestions = testConfig.questions.length;
+      questionCountBadgeEl.textContent = totalQuestions + (totalQuestions === 1 ? ' pregunta' : ' preguntas');
+      asideQuestionCountEl.textContent = totalQuestions;
+
+      const categoryKeys = Object.keys(testConfig.categories || {});
+      asideCategoryCountEl.textContent = categoryKeys.length;
+
+      // Render categorías en lateral
+      categoriesListEl.innerHTML = '';
+      categoryKeys.forEach(key => {
+        const c = testConfig.categories[key];
+        if (!c) return;
+        const div = document.createElement('div');
+        div.className = 'category-pill';
+        div.innerHTML = `<strong>${key} · ${c.name || ''}</strong><br>${c.description || ''}`;
+        categoriesListEl.appendChild(div);
+      });
+
+      // Asegurar longitud de answers
+      if (!Array.isArray(answers) || answers.length !== totalQuestions) {
+        answers = new Array(totalQuestions).fill(null);
+      }
+
+      // Corrección índice actual
+      if (currentQuestionIndex >= totalQuestions) currentQuestionIndex = totalQuestions - 1;
+      if (currentQuestionIndex < 0) currentQuestionIndex = 0;
+
+      renderQuizQuestion();
+      renderProgress();
+      renderResults(false);
+    }
+
+    function renderQuizQuestion() {
+      const totalQuestions = testConfig.questions.length;
+      if (totalQuestions === 0) {
+        currentQuestionTextEl.textContent = 'No hay preguntas definidas todavía. Agregá preguntas desde "Configurar plantilla".';
+        optionsGridEl.innerHTML = '';
+        questionIndexLabelEl.textContent = 'Pregunta 0 de 0';
+        return;
+      }
+
+      const q = testConfig.questions[currentQuestionIndex];
+      currentQuestionTextEl.textContent = q.text;
+
+      const selectedIndex = answers[currentQuestionIndex];
+      const letters = ['A','B','C','D','E','F'];
+
+      optionsGridEl.innerHTML = '';
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'option-btn' + (selectedIndex === idx ? ' selected' : '');
+        const letter = letters[idx] || '?';
+        btn.innerHTML = `<span class="letter">${letter}</span><span>${optText}</span>`;
+        btn.addEventListener('click', () => {
+          answers[currentQuestionIndex] = idx;
+          renderQuizQuestion();
+          renderProgress();
+          renderResults(false);
+        });
+        optionsGridEl.appendChild(btn);
+      });
+
+      questionIndexLabelEl.textContent = `Pregunta ${currentQuestionIndex + 1} de ${totalQuestions}`;
+
+      // Botones prev/next
+      prevButton.disabled = currentQuestionIndex === 0;
+      nextButton.disabled = currentQuestionIndex === totalQuestions - 1;
+    }
+
+    function renderProgress() {
+      const totalQuestions = testConfig.questions.length || 0;
+      if (totalQuestions === 0) {
+        progressInnerEl.style.width = '0%';
+        progressLabelEl.textContent = '0/0 respondidas';
+        return;
+      }
+      const answeredCount = answers.filter(v => v !== null && v !== undefined).length;
+      const pct = Math.round((answeredCount / totalQuestions) * 100) || 0;
+      progressInnerEl.style.width = pct + '%';
+      progressLabelEl.textContent = `${answeredCount}/${totalQuestions} respondidas`;
+    }
+
+    function calculateResults() {
+      const categoryKeys = Object.keys(testConfig.categories || {});
+      const scores = {};
+      categoryKeys.forEach(k => { scores[k] = 0; });
+
+      const letters = ['A','B','C','D','E','F'];
+
+      answers.forEach(selectedIndex => {
+        if (selectedIndex === null || selectedIndex === undefined) return;
+        const letter = letters[selectedIndex];
+        if (!letter) return;
+        if (!(letter in scores)) scores[letter] = 0;
+        scores[letter] += 1;
+      });
+
+      // Encontrar máximo
+      let maxScore = -Infinity;
+      Object.values(scores).forEach(score => {
+        if (score > maxScore) maxScore = score;
+      });
+      if (maxScore <= 0) {
+        return { scores, winners: [], maxScore: 0 };
+      }
+
+      const winners = Object.keys(scores).filter(k => scores[k] === maxScore);
+      return { scores, winners, maxScore };
+    }
+
+    function renderResults(forceShow) {
+      const { scores, winners, maxScore } = calculateResults();
+
+      const totalQuestions = testConfig.questions.length || 0;
+      const answeredCount = answers.filter(v => v !== null && v !== undefined).length;
+
+      const shouldShow = forceShow || (answeredCount === totalQuestions && totalQuestions > 0);
+      resultsBoxEl.style.display = shouldShow ? 'flex' : 'none';
+
+      if (!shouldShow) return;
+
+      if (!winners || winners.length === 0 || maxScore === 0) {
+        resultsTitleTextEl.textContent = 'Completá el test para ver tu resultado.';
+        resultsDescriptionTextEl.textContent = '';
+        categorySummaryEl.innerHTML = '';
+        return;
+      }
+
+      const categoryKeys = Object.keys(testConfig.categories || {});
+
+      if (winners.length === 1) {
+        const winnerKey = winners[0];
+        const cat = testConfig.categories[winnerKey] || { name: `Categoría ${winnerKey}`, description: '' };
+        resultsTitleTextEl.textContent = `Predomina: ${cat.name}`;
+        resultsDescriptionTextEl.textContent = cat.description || '';
+      } else {
+        const names = winners.map(k => (testConfig.categories[k] && testConfig.categories[k].name) || `Categoría ${k}`);
+        resultsTitleTextEl.textContent = 'Empate entre categorías:';
+        resultsDescriptionTextEl.textContent = names.join(' · ');
+      }
+
+      // Resumen por categoría
+      categorySummaryEl.innerHTML = '';
+      categoryKeys.forEach(key => {
+        const cat = testConfig.categories[key];
+        if (!cat) return;
+        const div = document.createElement('div');
+        div.className = 'category-pill';
+        const score = (scores && scores[key]) || 0;
+        const isWinner = winners && winners.includes(key);
+        div.innerHTML = `<strong>${key} · ${cat.name}</strong><br>Puntos: ${score}${isWinner ? ' ⭐' : ''}`;
+        categorySummaryEl.appendChild(div);
+      });
+    }
+
+    // ==============================
+    //   EVENTOS DE INTERFAZ
+    // ==============================
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.getAttribute('data-tab');
+        if (tab === 'quiz') {
+          quizView.style.display = 'flex';
+          configView.style.display = 'none';
+        } else {
+          quizView.style.display = 'none';
+          configView.style.display = 'flex';
+        }
+      });
+    });
+
+    prevButton.addEventListener('click', () => {
+      currentQuestionIndex = Math.max(0, currentQuestionIndex - 1);
+      renderQuizQuestion();
+      renderProgress();
+    });
+
+    nextButton.addEventListener('click', () => {
+      const totalQuestions = testConfig.questions.length;
+      currentQuestionIndex = Math.min(totalQuestions - 1, currentQuestionIndex + 1);
+      renderQuizQuestion();
+      renderProgress();
+    });
+
+    finishButton.addEventListener('click', () => {
+      const totalQuestions = testConfig.questions.length || 0;
+      if (totalQuestions === 0) return;
+      const answeredCount = answers.filter(v => v !== null && v !== undefined).length;
+      if (answeredCount < totalQuestions) {
+        if (!confirm('Todavía no respondiste todas las preguntas. ¿Querés ver igual el resultado?')) return;
+      }
+      renderResults(true);
+    });
+
+    addSampleQuestionBtn.addEventListener('click', addSampleQuestion);
+    resetTemplateBtn.addEventListener('click', resetTemplate);
+    syncToJsonBtn.addEventListener('click', () => {
+      updateConfigFromSimpleFields();
+    });
+    copyTemplateBtn.addEventListener('click', copyTemplateToClipboard);
+    loadFromTemplateBtn.addEventListener('click', loadConfigFromTemplateArea);
+
+    cfgTitleInput.addEventListener('change', updateConfigFromSimpleFields);
+    cfgDescriptionInput.addEventListener('change', updateConfigFromSimpleFields);
+
+    // Inicializar
+    answers = new Array(testConfig.questions.length).fill(null);
+    renderAll();
+    updateTemplateAreaFromConfig();
+  </script>
+</body>
+</html>
