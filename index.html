@@ -1146,30 +1146,28 @@ fetch("https://api.countapi.xyz/hit/que-filosofo-soy/visitas")
 </script>
 
 <!-- MONETAG ONCLICK - SOLO UNA VEZ POR SESIÓN -->
+<!-- MONETAG - UNA SOLA VEZ POR SESIÓN -->
 <script>
 (function() {
 
-  // Si ya se mostró antes, no volver a mostrar
-  if (sessionStorage.getItem('adShown')) return;
+  // Si ya se mostró en esta sesión → no mostrar de nuevo
+  if (sessionStorage.getItem('monetag_once_shown')) return;
 
-  function showAdOnce() {
-    sessionStorage.setItem('adShown', 'true'); // Marcar como mostrado
-    document.removeEventListener("click", showAdOnce);
+  // Marcar como mostrado
+  sessionStorage.setItem('monetag_once_shown', 'true');
 
-    var s = document.createElement('script');
-    s.src = "https://al5sm.com/tag.min.js";
-    s.dataset.zone = "10151419";
-    s.async = true;
-    document.body.appendChild(s);
-  }
-
-  document.addEventListener("click", showAdOnce);
+  // Cargar el anuncio
+  var s = document.createElement('script');
+  s.src = "https://al5sm.com/tag.min.js";
+  s.dataset.zone = "10151419";
+  s.async = true;
+  document.body.appendChild(s);
 
 })();
 </script>
-
 </body>
-</html>
+</html>  
+
 
 
 
