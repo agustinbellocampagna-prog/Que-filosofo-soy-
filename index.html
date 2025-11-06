@@ -1147,26 +1147,12 @@ fetch("https://api.countapi.xyz/hit/que-filosofo-soy/visitas")
 
 <!-- MONETAG ONCLICK - SOLO UNA VEZ POR SESIÓN -->
 <!-- MONETAG - UNA SOLA VEZ POR SESIÓN -->
-<script>
-(function() {
+<!-- MONETAG VIGNETTE (controlado, no spam) -->
+<script>(function(s){s.dataset.zone='10152227',s.src='https://groleegni.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 
-  // Si ya se mostró en esta sesión → no mostrar de nuevo
-  if (sessionStorage.getItem('monetag_once_shown')) return;
-
-  // Marcar como mostrado
-  sessionStorage.setItem('monetag_once_shown', 'true');
-
-  // Cargar el anuncio
-  var s = document.createElement('script');
-  s.src = "https://al5sm.com/tag.min.js";
-  s.dataset.zone = "10151419";
-  s.async = true;
-  document.body.appendChild(s);
-
-})();
-</script>
 </body>
 </html>  
+
 
 
 
